@@ -119,8 +119,8 @@ class Mutator(app_manager.RyuApp):
             # Lookup virtual address
             # Create virtual address for src if it doesn't have one yet
 
-            if dst_ip == '10.131.1.5':
-                actions = [parser.OFPActionSetField(arp_tpa='10.131.1.2')]
+            if dst_ip == '10.0.0.5':
+                actions = [parser.OFPActionSetField(arp_tpa='10.0.0.2'), parser.OFPActionOutput(out_port)]
 
                 # install a flow to avoid packet_in next time
                 # if out_port != ofproto.OFPP_FLOOD:
@@ -140,8 +140,8 @@ class Mutator(app_manager.RyuApp):
                                           in_port=in_port, actions=actions, data=data)
                 datapath.send_msg(out)
                 self.logger.info("You hit the controller 1")
-            elif src_ip == '10.131.1.2':
-                actions = [parser.OFPActionSetField(arp_spa='10.131.1.5')]
+            elif src_ip == '10.0.0.2':
+                actions = [parser.OFPActionSetField(arp_spa='10.0.0.5'), parser.OFPActionOutput(out_port)]
 
                 # install a flow to avoid packet_in next time
                 # if out_port != ofproto.OFPP_FLOOD:
@@ -187,81 +187,81 @@ class Mutator(app_manager.RyuApp):
                                           in_port=in_port, actions=actions, data=data)
                 datapath.send_msg(out)
                 self.logger.info("You hit the controller 3")
-        # elif icmpPkt !=[]:
-        #     ipv4Pkt = ipv4Pkt[0]
-        #     dst_ip = ipv4Pkt.dst
-        #     src_ip = ipv4Pkt.src
-        #
-        #     if dst_ip == '10.131.1.5':
-        #         actions = [parser.OFPActionSetField(ipv4_dst = '10.131.1.2'),parser.OFPActionOutput(out_port)]
-        #         # install a flow to avoid packet_in next time
-        #         if out_port != ofproto.OFPP_FLOOD:
-        #             match = parser.OFPMatch(in_port=in_port, eth_type=0x800, ipv4_dst=dst_ip)
-        #             # verify if we have a valid buffer_id, if yes avoid to send both
-        #             # flow_mod & packet_out
-        #             # if msg.buffer_id != ofproto.OFP_NO_BUFFER:
-        #             #     self.add_flow(datapath, 1, match, actions)
-        #             #
-        #             #     # self.add_flow(datapath, 1, match, actions, msg.buffer_id)
-        #             #     return
-        #             # else:
-        #             #     self.add_flow(datapath, 1, match, actions)
-        #         data = None
-        #         if msg.buffer_id == ofproto.OFP_NO_BUFFER:
-        #             data = msg.data
-        #
-        #         out = parser.OFPPacketOut(datapath=datapath, buffer_id=msg.buffer_id,
-        #                                   in_port=in_port, actions=actions, data=data)
-        #         datapath.send_msg(out)
-        #         self.logger.info("You hit the controller 4")
-        #
-        #     elif src_ip == '10.131.1.2':
-        #         actions = [parser.OFPActionSetField(ipv4_src = '10.131.1.5'),parser.OFPActionOutput(out_port)]
-        #         # install a flow to avoid packet_in next time
-        #         if out_port != ofproto.OFPP_FLOOD:
-        #             match = parser.OFPMatch(in_port=in_port, eth_type=0x800, ipv4_src=src_ip)
-        #
-        #             # TODO: for some reason the buffer is not showing up as empty, so I'm getting an error about an empty buffer. Maybe fix later
-        #             #verify if we have a valid buffer_id, if yes avoid to send both
-        #             #flow_mod & packet_out
-        #             # if msg.buffer_id != ofproto.OFP_NO_BUFFER:
-        #             #     self.add_flow(datapath, 1, match, actions)
-        #             #
-        #             #     # self.add_flow(datapath, 1, match, actions, msg.buffer_id)
-        #             #     return
-        #             # else:
-        #             #     self.add_flow(datapath, 1, match, actions)
-        #         data = None
-        #         if msg.buffer_id == ofproto.OFP_NO_BUFFER:
-        #             data = msg.data
-        #
-        #         out = parser.OFPPacketOut(datapath=datapath, buffer_id=msg.buffer_id,
-        #                                   in_port=in_port, actions=actions, data=data)
-        #         datapath.send_msg(out)
-        #         self.logger.info("You hit the controller 5")
-        #
-        #     else:
-        #         actions = [parser.OFPActionOutput(out_port)]
-        #         # install a flow to avoid packet_in next time
-        #         if out_port != ofproto.OFPP_FLOOD:
-        #             match = parser.OFPMatch(in_port=in_port, eth_dst=dst)
-        #
-        #             # TODO: for some reason the buffer is not showing up as empty, so I'm getting an error about an empty buffer. Maybe fix later
-        #             #verify if we have a valid buffer_id, if yes avoid to send both
-        #             #flow_mod & packet_out
-        #             if msg.buffer_id != ofproto.OFP_NO_BUFFER:
-        #                 self.add_flow(datapath, 1, match, actions, msg.buffer_id)
-        #                 return
-        #             else:
-        #                 self.add_flow(datapath, 1, match, actions)
-        #         data = None
-        #         if msg.buffer_id == ofproto.OFP_NO_BUFFER:
-        #             data = msg.data
-        #
-        #         out = parser.OFPPacketOut(datapath=datapath, buffer_id=msg.buffer_id,
-        #                                   in_port=in_port, actions=actions, data=data)
-        #         datapath.send_msg(out)
-        #         self.logger.info("You hit the controller 6")
+        elif icmpPkt !=[]:
+            ipv4Pkt = ipv4Pkt[0]
+            dst_ip = ipv4Pkt.dst
+            src_ip = ipv4Pkt.src
+
+            if dst_ip == '10.0.0.5':
+                actions = [parser.OFPActionSetField(ipv4_dst = '10.0.0.2'),parser.OFPActionOutput(out_port)]
+                # install a flow to avoid packet_in next time
+                if out_port != ofproto.OFPP_FLOOD:
+                    match = parser.OFPMatch(in_port=in_port, eth_type=0x800, ipv4_dst=dst_ip)
+                    # verify if we have a valid buffer_id, if yes avoid to send both
+                    # flow_mod & packet_out
+                    # if msg.buffer_id != ofproto.OFP_NO_BUFFER:
+                    #     self.add_flow(datapath, 1, match, actions)
+                    #
+                    #     # self.add_flow(datapath, 1, match, actions, msg.buffer_id)
+                    #     return
+                    # else:
+                    #     self.add_flow(datapath, 1, match, actions)
+                data = None
+                if msg.buffer_id == ofproto.OFP_NO_BUFFER:
+                    data = msg.data
+
+                out = parser.OFPPacketOut(datapath=datapath, buffer_id=msg.buffer_id,
+                                          in_port=in_port, actions=actions, data=data)
+                datapath.send_msg(out)
+                self.logger.info("You hit the controller 4")
+
+            elif src_ip == '10.0.0.2':
+                actions = [parser.OFPActionSetField(ipv4_src = '10.0.0.5'),parser.OFPActionOutput(out_port)]
+                # install a flow to avoid packet_in next time
+                if out_port != ofproto.OFPP_FLOOD:
+                    match = parser.OFPMatch(in_port=in_port, eth_type=0x800, ipv4_src=src_ip)
+
+                    # TODO: for some reason the buffer is not showing up as empty, so I'm getting an error about an empty buffer. Maybe fix later
+                    #verify if we have a valid buffer_id, if yes avoid to send both
+                    #flow_mod & packet_out
+                    # if msg.buffer_id != ofproto.OFP_NO_BUFFER:
+                    #     self.add_flow(datapath, 1, match, actions)
+                    #
+                    #     # self.add_flow(datapath, 1, match, actions, msg.buffer_id)
+                    #     return
+                    # else:
+                    #     self.add_flow(datapath, 1, match, actions)
+                data = None
+                if msg.buffer_id == ofproto.OFP_NO_BUFFER:
+                    data = msg.data
+
+                out = parser.OFPPacketOut(datapath=datapath, buffer_id=msg.buffer_id,
+                                          in_port=in_port, actions=actions, data=data)
+                datapath.send_msg(out)
+                self.logger.info("You hit the controller 5")
+
+            else:
+                actions = [parser.OFPActionOutput(out_port)]
+                # install a flow to avoid packet_in next time
+                if out_port != ofproto.OFPP_FLOOD:
+                    match = parser.OFPMatch(in_port=in_port, eth_dst=dst)
+
+                    # TODO: for some reason the buffer is not showing up as empty, so I'm getting an error about an empty buffer. Maybe fix later
+                    #verify if we have a valid buffer_id, if yes avoid to send both
+                    #flow_mod & packet_out
+                    if msg.buffer_id != ofproto.OFP_NO_BUFFER:
+                        self.add_flow(datapath, 1, match, actions, msg.buffer_id)
+                        return
+                    else:
+                        self.add_flow(datapath, 1, match, actions)
+                data = None
+                if msg.buffer_id == ofproto.OFP_NO_BUFFER:
+                    data = msg.data
+
+                out = parser.OFPPacketOut(datapath=datapath, buffer_id=msg.buffer_id,
+                                          in_port=in_port, actions=actions, data=data)
+                datapath.send_msg(out)
+                self.logger.info("You hit the controller 6")
 
         else:
             actions = [parser.OFPActionOutput(out_port)]
