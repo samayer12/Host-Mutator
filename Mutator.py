@@ -48,6 +48,8 @@ class Mutator(app_manager.RyuApp):
         # truncated packet data. In that case, we cannot output packets
         # correctly.  The bug has been fixed in OVS v2.1.0.
         match = parser.OFPMatch()
+
+        # Removed this: ofproto.OFPCML_NO_BUFFER), because it was giving all packets the empty buffer ID
         actions = [parser.OFPActionOutput(ofproto.OFPP_CONTROLLER)]
         self.add_flow(datapath, 0, match, actions)
 
@@ -81,7 +83,6 @@ class Mutator(app_manager.RyuApp):
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
         in_port = msg.match['in_port']
-        self.logger.info(msg.buffer_id)
 
         # Setup the packet
         pkt = packet.Packet(msg.data)
@@ -133,8 +134,10 @@ class Mutator(app_manager.RyuApp):
                     # else:
                     #     self.add_flow(datapath, 1, match, actions)
                 data = None
+                self.logger.info(msg.buffer_id)
                 if msg.buffer_id == ofproto.OFP_NO_BUFFER:
                     data = msg.data
+                    self.logger.info("Still empty")
 
                 out = parser.OFPPacketOut(datapath=datapath, buffer_id=msg.buffer_id,
                                           in_port=in_port, actions=actions, data=data)
