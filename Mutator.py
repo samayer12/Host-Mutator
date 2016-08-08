@@ -123,15 +123,15 @@ class Mutator(app_manager.RyuApp):
                 actions = [parser.OFPActionSetField(arp_tpa='10.131.1.2'), parser.OFPActionOutput(out_port)]
 
                 # install a flow to avoid packet_in next time
-                if out_port != ofproto.OFPP_FLOOD:
-                    match = parser.OFPMatch(in_port=in_port, eth_type=0x806, arp_tpa='10.131.1.2')
-                    # verify if we have a valid buffer_id, if yes avoid to send both
-                    # flow_mod & packet_out
-                    if msg.buffer_id != ofproto.OFP_NO_BUFFER:
-                        self.add_flow(datapath, 1, match, actions, msg.buffer_id)
-                        return
-                    else:
-                        self.add_flow(datapath, 1, match, actions)
+                # if out_port != ofproto.OFPP_FLOOD:
+                #     match = parser.OFPMatch(in_port=in_port, eth_type=0x806, arp_tpa='10.131.1.2')
+                #     # verify if we have a valid buffer_id, if yes avoid to send both
+                #     # flow_mod & packet_out
+                #     if msg.buffer_id != ofproto.OFP_NO_BUFFER:
+                #         self.add_flow(datapath, 1, match, actions, msg.buffer_id)
+                #         return
+                #     else:
+                #         self.add_flow(datapath, 1, match, actions)
                 data = None
                 self.logger.info(msg.buffer_id)
                 if msg.buffer_id == ofproto.OFP_NO_BUFFER:
@@ -146,15 +146,15 @@ class Mutator(app_manager.RyuApp):
                 actions = [parser.OFPActionSetField(arp_spa='10.131.1.5'), parser.OFPActionOutput(out_port)]
 
                 # install a flow to avoid packet_in next time
-                if out_port != ofproto.OFPP_FLOOD:
-                    match = parser.OFPMatch(in_port=in_port, eth_type=0x806, arp_spa='10.131.1.2')
-                    # verify if we have a valid buffer_id, if yes avoid to send both
-                    # flow_mod & packet_out
-                    if msg.buffer_id != ofproto.OFP_NO_BUFFER:
-                        self.add_flow(datapath, 1, match, actions, msg.buffer_id)
-                        return
-                    else:
-                        self.add_flow(datapath, 1, match, actions)
+                # if out_port != ofproto.OFPP_FLOOD:
+                #     match = parser.OFPMatch(in_port=in_port, eth_type=0x806, arp_spa='10.131.1.2')
+                #     # verify if we have a valid buffer_id, if yes avoid to send both
+                #     # flow_mod & packet_out
+                #     if msg.buffer_id != ofproto.OFP_NO_BUFFER:
+                #         self.add_flow(datapath, 1, match, actions, msg.buffer_id)
+                #         return
+                #     else:
+                #         self.add_flow(datapath, 1, match, actions)
                 data = None
                 if msg.buffer_id == ofproto.OFP_NO_BUFFER:
                     data = msg.data
