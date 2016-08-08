@@ -119,8 +119,8 @@ class Mutator(app_manager.RyuApp):
             # Lookup virtual address
             # Create virtual address for src if it doesn't have one yet
 
-            if dst_ip == '10.0.0.5':
-                actions = [parser.OFPActionSetField(arp_tpa='10.0.0.2'), parser.OFPActionOutput(out_port)]
+            if dst_ip == '10.131.1.5':
+                actions = [parser.OFPActionSetField(arp_tpa='10.131.1.2'), parser.OFPActionOutput(out_port)]
 
                 # install a flow to avoid packet_in next time
                 # if out_port != ofproto.OFPP_FLOOD:
@@ -140,8 +140,8 @@ class Mutator(app_manager.RyuApp):
                                           in_port=in_port, actions=actions, data=data)
                 datapath.send_msg(out)
                 self.logger.info("You hit the controller 1")
-            elif src_ip == '10.0.0.2':
-                actions = [parser.OFPActionSetField(arp_spa='10.0.0.5'), parser.OFPActionOutput(out_port)]
+            elif src_ip == '10.131.1.2':
+                actions = [parser.OFPActionSetField(arp_spa='10.131.1.5'), parser.OFPActionOutput(out_port)]
 
                 # install a flow to avoid packet_in next time
                 # if out_port != ofproto.OFPP_FLOOD:
@@ -192,8 +192,8 @@ class Mutator(app_manager.RyuApp):
             dst_ip = ipv4Pkt.dst
             src_ip = ipv4Pkt.src
 
-            if dst_ip == '10.0.0.5':
-                actions = [parser.OFPActionSetField(ipv4_dst = '10.0.0.2'),parser.OFPActionOutput(out_port)]
+            if dst_ip == '10.131.1.5':
+                actions = [parser.OFPActionSetField(ipv4_dst='10.131.1.2'),parser.OFPActionOutput(out_port)]
                 # install a flow to avoid packet_in next time
                 if out_port != ofproto.OFPP_FLOOD:
                     match = parser.OFPMatch(in_port=in_port, eth_type=0x800, ipv4_dst=dst_ip)
@@ -215,8 +215,8 @@ class Mutator(app_manager.RyuApp):
                 datapath.send_msg(out)
                 self.logger.info("You hit the controller 4")
 
-            elif src_ip == '10.0.0.2':
-                actions = [parser.OFPActionSetField(ipv4_src = '10.0.0.5'),parser.OFPActionOutput(out_port)]
+            elif src_ip == '10.131.1.2':
+                actions = [parser.OFPActionSetField(ipv4_src='10.131.1.5'),parser.OFPActionOutput(out_port)]
                 # install a flow to avoid packet_in next time
                 if out_port != ofproto.OFPP_FLOOD:
                     match = parser.OFPMatch(in_port=in_port, eth_type=0x800, ipv4_src=src_ip)
