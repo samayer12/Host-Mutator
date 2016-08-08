@@ -40,7 +40,6 @@ class Mutator(app_manager.RyuApp):
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
 
-        self.loggger.info('hit me hit me')
         # install table-miss flow entry
         #
         # We specify NO BUFFER to max_len of the output action due to
@@ -83,6 +82,7 @@ class Mutator(app_manager.RyuApp):
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
         in_port = msg.match['in_port']
+        self.logger.info(msg.buffer_id)
 
         # Setup the packet
         pkt = packet.Packet(msg.data)
@@ -134,10 +134,8 @@ class Mutator(app_manager.RyuApp):
                     # else:
                     #     self.add_flow(datapath, 1, match, actions)
                 data = None
-                self.logger.info(msg.buffer_id)
                 if msg.buffer_id == ofproto.OFP_NO_BUFFER:
                     data = msg.data
-                    self.logger.info("no buffer 1")
 
                 out = parser.OFPPacketOut(datapath=datapath, buffer_id=msg.buffer_id,
                                           in_port=in_port, actions=actions, data=data)
@@ -265,7 +263,6 @@ class Mutator(app_manager.RyuApp):
                                           in_port=in_port, actions=actions, data=data)
                 datapath.send_msg(out)
                 self.logger.info("You hit the controller 6")
-
         else:
             actions = [parser.OFPActionOutput(out_port)]
             # install a flow to avoid packet_in next time
