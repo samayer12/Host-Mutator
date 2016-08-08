@@ -40,6 +40,7 @@ class Mutator(app_manager.RyuApp):
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
 
+        self.loggger.info('hit me hit me')
         # install table-miss flow entry
         #
         # We specify NO BUFFER to max_len of the output action due to
