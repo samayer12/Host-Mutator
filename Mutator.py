@@ -50,7 +50,7 @@ class Mutator(app_manager.RyuApp):
         match = parser.OFPMatch()
 
         # Removed this: ofproto.OFPCML_NO_BUFFER), because it was giving all packets the empty buffer ID
-        actions = [parser.OFPActionOutput(ofproto.OFPP_CONTROLLER)]
+        actions = [parser.OFPActionOutput(ofproto.OFPP_CONTROLLER),ofproto.OFPCML_NO_BUFFER]
         self.add_flow(datapath, 0, match, actions)
 
     def add_flow(self, datapath, priority, match, actions, buffer_id=None):
