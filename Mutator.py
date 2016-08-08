@@ -116,7 +116,7 @@ class Mutator(app_manager.RyuApp):
             dst_ip = arpPkt.dst_ip
             src_ip = arpPkt.src_ip
 
-            # Lookup virtual address
+            # Lookup virtual addresss
             # Create virtual address for src if it doesn't have one yet
 
             if dst_ip == '10.131.1.5':
