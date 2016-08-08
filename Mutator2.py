@@ -131,7 +131,7 @@ class Mutator2(app_manager.RyuApp):
                 datapath.send_msg(out)
                 self.logger.info("You hit the controller 1")
             elif dst_ip == '10.131.1.3':
-                actions = [parser.OFPActionSetField(eth_srca='00:0c:29:8d:ce:44'), parser.OFPActionOutput(out_port)]
+                actions = [parser.OFPActionSetField(eth_src='00:0c:29:8d:ce:44'), parser.OFPActionOutput(out_port)]
 
                 # # install a flow to avoid packet_in next time
                 # if out_port != ofproto.OFPP_FLOOD:
