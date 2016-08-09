@@ -166,10 +166,10 @@ class Mutator(app_manager.RyuApp):
         elif icmpPkt:
             '''IPV4 Translation'''
             ipv4Pkt = ipv4Pkt[0]
-            dst_rip = ipv4Pkt.dst
-            src_rip = ipv4Pkt.src
-            dst_vip = self.RIP_VIP[dpid][dst_rip]
+            src_rip = ipv4Pkt.src_ip
+            dst_vip = ipv4Pkt.dst_ip
             src_vip = self.RIP_VIP[dpid][src_rip]
+            dst_rip = self.VIP_RIP[dpid][dst_vip]
 
             self.logger.info('src_RIP: %s, src_VIP: %s', src_rip, src_vip)
             self.logger.info('dst_RIP: %s, dst_VIP: %s', dst_rip, dst_vip)
