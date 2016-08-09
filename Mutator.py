@@ -106,6 +106,7 @@ class Mutator(app_manager.RyuApp):
 
         # Setup default for IP translation
         self.RIP_VIP.setdefault(dpid, {})
+        self.VIP_RIP.setdefault(dpid, {})
         self.RIP_VIP[dpid]['10.131.1.3'] = '10.131.1.4'
         self.VIP_RIP[dpid]['10.131.1.4'] = '10.131.1.3'
         self.RIP_VIP[dpid]['10.131.1.2'] = '10.131.1.5'
