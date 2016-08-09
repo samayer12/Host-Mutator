@@ -168,8 +168,8 @@ class Mutator(app_manager.RyuApp):
                 # install a flow to avoid packet_in next time
                 if out_port != ofproto.OFPP_FLOOD:
                     match = parser.OFPMatch(in_port=in_port, eth_dst=dst)
-                    #verify if we have a valid buffer_id, if yes avoid to send both
-                    #flow_mod & packet_out
+                    # verify if we have a valid buffer_id, if yes avoid to send both
+                    # flow_mod & packet_out
                     if msg.buffer_id != ofproto.OFP_NO_BUFFER:
                         self.add_flow(datapath, 1, match, actions, msg.buffer_id)
                         return
@@ -193,8 +193,8 @@ class Mutator(app_manager.RyuApp):
                 # install a flow to avoid packet_in next time
                 if out_port != ofproto.OFPP_FLOOD:
                     match = parser.OFPMatch(in_port=in_port, eth_type=0x800, ipv4_dst=dst_ip)
-                    verify if we have a valid buffer_id, if yes avoid to send both
-                    flow_mod & packet_out
+                    # verify if we have a valid buffer_id, if yes avoid to send both
+                    # flow_mod & packet_out
                     if msg.buffer_id != ofproto.OFP_NO_BUFFER:
                         self.add_flow(datapath, 1, match, actions)
 
@@ -239,10 +239,8 @@ class Mutator(app_manager.RyuApp):
                 # install a flow to avoid packet_in next time
                 if out_port != ofproto.OFPP_FLOOD:
                     match = parser.OFPMatch(in_port=in_port, eth_dst=dst)
-
-                    # TODO: for some reason the buffer is not showing up as empty, so I'm getting an error about an empty buffer. Maybe fix later
-                    #verify if we have a valid buffer_id, if yes avoid to send both
-                    #flow_mod & packet_out
+                    # verify if we have a valid buffer_id, if yes avoid to send both
+                    # flow_mod & packet_out
                     if msg.buffer_id != ofproto.OFP_NO_BUFFER:
                         self.add_flow(datapath, 1, match, actions, msg.buffer_id)
                         return
