@@ -142,12 +142,12 @@ class Mutator(app_manager.RyuApp):
             self.logger.info('src_RIP: %s, src_VIP: %s', src_rip, src_vip)
             self.logger.info('dst_RIP: %s, dst_VIP: %s', dst_rip, dst_vip)
 
-            actions = [parser.OFPActionSetField(arp_tpa=dst_vip), parser.OFPActionSetField(arp_spa=src_vip),
+            actions = [parser.OFPActionSetField(arp_tpa=dst_rip), parser.OFPActionSetField(arp_spa=src_vip),
                        parser.OFPActionOutput(out_port)]
 
             # install a flow to avoid the controller having to decide
             if out_port != ofproto.OFPP_FLOOD:
-                match = parser.OFPMatch(in_port=in_port, eth_type=0x806, arp_tpa=dst_vip, arp_spa=src_vip)
+                match = parser.OFPMatch(in_port=in_port, eth_type=0x806, arp_tpa=dst_rip, arp_spa=src_vip)
                 # verify if we have a valid buffer_id, if yes avoid to send both
                 # flow_mod & packet_out
                 if msg.buffer_id != ofproto.OFP_NO_BUFFER:
@@ -174,12 +174,12 @@ class Mutator(app_manager.RyuApp):
             self.logger.info('src_RIP: %s, src_VIP: %s', src_rip, src_vip)
             self.logger.info('dst_RIP: %s, dst_VIP: %s', dst_rip, dst_vip)
 
-            actions = [parser.OFPActionSetField(ipv4_dst=dst_vip), parser.OFPActionSetField(ipv4_src=src_vip),
+            actions = [parser.OFPActionSetField(ipv4_dst=dst_rip), parser.OFPActionSetField(ipv4_src=src_vip),
                        parser.OFPActionOutput(out_port)]
 
             # install a flow to avoid the controller having to decide
             if out_port != ofproto.OFPP_FLOOD:
-                match = parser.OFPMatch(in_port=in_port, eth_type=0x800, ipv4_dst=dst_vip, ipv4_src=src_vip)
+                match = parser.OFPMatch(in_port=in_port, eth_type=0x800, ipv4_dst=dst_rip, ipv4_src=src_vip)
                 # verify if we have a valid buffer_id, if yes avoid to send both
                 # flow_mod & packet_out
                 if msg.buffer_id != ofproto.OFP_NO_BUFFER:
