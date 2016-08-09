@@ -109,7 +109,7 @@ class Mutator(app_manager.RyuApp):
         self.RIP_VIP[dpid]['10.131.1.3'] = '10.131.1.4'
         self.VIP_RIP[dpid]['10.131.1.4'] = '10.131.1.3'
         self.RIP_VIP[dpid]['10.131.1.2'] = '10.131.1.5'
-        self.VIP_RIPdpid['10.131.1.5'] = '10.131.1.2'
+        self.VIP_RIP[dpid]['10.131.1.5'] = '10.131.1.2'
 
         '''Basic Switch Functionality'''
         if eth.ethertype == ether_types.ETH_TYPE_LLDP:
