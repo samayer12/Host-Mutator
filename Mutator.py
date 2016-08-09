@@ -136,7 +136,7 @@ class Mutator(app_manager.RyuApp):
             dst_vip = self.address_translation(dpid, dst_rip)
             src_vip = self.address_translation(dpid, src_rip)
 
-            self.logger.info(self.address_translation(dpid))
+            self.logger.info(self.address_translation)
 
             actions = [parser.OFPActionSetField(arp_tpa=dst_vip), parser.OFPActionSetField(arp_spa=src_vip), parser.OFPActionOutput(out_port)]
 
