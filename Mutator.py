@@ -32,10 +32,7 @@ class Mutator(app_manager.RyuApp):
     def __init__(self, *args, **kwargs):
         super(Mutator, self).__init__(*args, **kwargs)
         self.mac_to_port = {}
-        self.ipTranslation = {}
-        self.ipPool = {'10.131.0.5', '10.131.0.6', '10.131.0.7', '10.131.0.8', '10.131.0.9',
-                       '10.131.0.10', '10.131.0.11', '10.131.0.12', '10.131.0.13', '10.131.0.14',
-                       '10.131.0.15', '10.131.0.16', '10.131.0.17', '10.131.0.18', '10.131.0.19', '10.131.0.20'}
+        self.ipTranslation = {{'10.131.0.3', '10.131.0.4'}, {'10.131.0.2', '10.131.0.5'}}
 
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
     def switch_features_handler(self, ev):
@@ -133,12 +130,14 @@ class Mutator(app_manager.RyuApp):
             arpPkt = arpPkt[0]
             dst_rip = arpPkt.dst_ip
             src_rip = arpPkt.src_ip
-            dst_vip = self.address_translation(dpid, dst_rip)
-            src_vip = self.address_translation(dpid, src_rip)
+            dst_vip = self.ipTranslation[dpid][dst_rip]
+            src_vip = self.ipTranslation[dpid][src_rip]
 
-            self.logger.info(self.address_translation)
+            self.logger.info('src_RIP: %s, src_VIP: %s', src_rip, src_vip)
+            self.logger.info('dst_RIP: %s, dst_VIP: %s', dst_rip, dst_vip)
 
-            actions = [parser.OFPActionSetField(arp_tpa=dst_vip), parser.OFPActionSetField(arp_spa=src_vip), parser.OFPActionOutput(out_port)]
+            actions = [parser.OFPActionSetField(arp_tpa=dst_vip), parser.OFPActionSetField(arp_spa=src_vip),
+                       parser.OFPActionOutput(out_port)]
 
             # install a flow to avoid the controller having to decide
             if out_port != ofproto.OFPP_FLOOD:
