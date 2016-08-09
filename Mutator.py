@@ -73,12 +73,11 @@ class Mutator(app_manager.RyuApp):
     def address_translation(self, dpid, rip):
         # Lookup virtual address
         if rip in self.ipTranslation[dpid]:
-             return self.ipTranslation[dpid][rip]
+            return self.ipTranslation[dpid][rip]
         # Create virtual address for src if it doesn't have one yet
         else:
             for address in self.ipPool:
-                if address in self.ipTranslation[dpid]:
-                else:
+                if address not in self.ipTranslation[dpid]:
                     self.ipTranslation[dpid][rip] = address
                     return address
 
