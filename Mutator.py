@@ -131,10 +131,10 @@ class Mutator(app_manager.RyuApp):
         if arpPkt:
             '''ARP Translation'''
             arpPkt = arpPkt[0]
-            dst_rip = arpPkt.dst_ip
             src_rip = arpPkt.src_ip
-            dst_vip = self.ipTranslation[dpid][dst_rip]
+            dst_vip = arpPkt.dst_ip
             src_vip = self.ipTranslation[dpid][src_rip]
+            dst_rip = self.ipTranslation[dpid][dst_vip]
 
             self.logger.info('src_RIP: %s, src_VIP: %s', src_rip, src_vip)
             self.logger.info('dst_RIP: %s, dst_VIP: %s', dst_rip, dst_vip)
