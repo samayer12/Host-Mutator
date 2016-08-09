@@ -32,7 +32,8 @@ class Mutator(app_manager.RyuApp):
     def __init__(self, *args, **kwargs):
         super(Mutator, self).__init__(*args, **kwargs)
         self.mac_to_port = {}
-        self.ipTranslation = {}
+        self.RIP_VIP = {}
+        self.VIP_RIP = {}
 
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
     def switch_features_handler(self, ev):
@@ -69,13 +70,13 @@ class Mutator(app_manager.RyuApp):
         
     def address_translation(self, dpid, rip):
         # Lookup virtual address
-        if rip in self.ipTranslation[dpid]:
-            return self.ipTranslation[dpid][rip]
+        if rip in self.RIP_VIP[dpid]:
+            return self.RIP_VIP[dpid][rip]
         # Create virtual address for src if it doesn't have one yet
         else:
             for address in self.ipPool:
-                if address not in self.ipTranslation[dpid]:
-                    self.ipTranslation[dpid][rip] = address
+                if address not in self.RIP_VIP[dpid]:
+                    self.RIP_VIP[dpid][rip] = address
                     return address
 
     @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
@@ -104,10 +105,11 @@ class Mutator(app_manager.RyuApp):
         arpPkt = pkt.get_protocols(arp.arp)
 
         # Setup default for IP translation
-        self.ipTranslation.setdefault(dpid, {})
-        self.ipTranslation[dpid]['10.131.1.3'] = '10.131.1.4'
-        self.ipTranslation[dpid]['10.131.1.2'] = '10.131.1.5'
-        self.logger.info('hit me hit me')
+        self.RIP_VIP.setdefault(dpid, {})
+        self.RIP_VIP[dpid]['10.131.1.3'] = '10.131.1.4'
+        self.VIP_RIP[dpid]['10.131.1.4'] = '10.131.1.3'
+        self.RIP_VIP[dpid]['10.131.1.2'] = '10.131.1.5'
+        self.VIP_RIPdpid['10.131.1.5'] = '10.131.1.2'
 
         '''Basic Switch Functionality'''
         if eth.ethertype == ether_types.ETH_TYPE_LLDP:
@@ -133,8 +135,8 @@ class Mutator(app_manager.RyuApp):
             arpPkt = arpPkt[0]
             src_rip = arpPkt.src_ip
             dst_vip = arpPkt.dst_ip
-            src_vip = self.ipTranslation[dpid][src_rip]
-            dst_rip = self.ipTranslation[dpid][dst_vip]
+            src_vip = self.RIP_VIP[dpid][src_rip]
+            dst_rip = self.VIP_RIP[dpid][dst_vip]
 
             self.logger.info('src_RIP: %s, src_VIP: %s', src_rip, src_vip)
             self.logger.info('dst_RIP: %s, dst_VIP: %s', dst_rip, dst_vip)
@@ -165,8 +167,8 @@ class Mutator(app_manager.RyuApp):
             ipv4Pkt = ipv4Pkt[0]
             dst_rip = ipv4Pkt.dst
             src_rip = ipv4Pkt.src
-            dst_vip = self.ipTranslation[dpid][dst_rip]
-            src_vip = self.ipTranslation[dpid][src_rip]
+            dst_vip = self.RIP_VIP[dpid][dst_rip]
+            src_vip = self.RIP_VIP[dpid][src_rip]
 
             self.logger.info('src_RIP: %s, src_VIP: %s', src_rip, src_vip)
             self.logger.info('dst_RIP: %s, dst_VIP: %s', dst_rip, dst_vip)
