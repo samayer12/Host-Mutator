@@ -32,7 +32,7 @@ class Mutator(app_manager.RyuApp):
     def __init__(self, *args, **kwargs):
         super(Mutator, self).__init__(*args, **kwargs)
         self.mac_to_port = {}
-        self.ipTranslation = {{'10.131.0.3', '10.131.0.4'}, {'10.131.0.2', '10.131.0.5'}}
+        self.ipTranslation = {}
 
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
     def switch_features_handler(self, ev):
@@ -105,6 +105,8 @@ class Mutator(app_manager.RyuApp):
 
         # Setup default for IP translation
         self.ipTranslation.setdefault(dpid, {})
+        self.ipTranslation[dpid]['10.131.0.3'] = '10.131.0.4'
+        self.ipTranslation[dpid]['10.131.0.2'] = '10.131.0.5'
 
         '''Basic Switch Functionality'''
         if eth.ethertype == ether_types.ETH_TYPE_LLDP:
@@ -162,9 +164,11 @@ class Mutator(app_manager.RyuApp):
             ipv4Pkt = ipv4Pkt[0]
             dst_rip = ipv4Pkt.dst
             src_rip = ipv4Pkt.src
-            dst_vip = self.address_translation(dpid, dst_rip)
-            src_vip = self.address_translation(dpid, src_rip)
-            self.logger.info(self.address_translation(dpid))
+            dst_vip = self.ipTranslation[dpid][dst_rip]
+            src_vip = self.ipTranslation[dpid][src_rip]
+
+            self.logger.info('src_RIP: %s, src_VIP: %s', src_rip, src_vip)
+            self.logger.info('dst_RIP: %s, dst_VIP: %s', dst_rip, dst_vip)
 
             actions = [parser.OFPActionSetField(ipv4_dst=dst_vip), parser.OFPActionSetField(ipv4_src=src_vip),
                        parser.OFPActionOutput(out_port)]
