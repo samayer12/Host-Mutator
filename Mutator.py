@@ -107,6 +107,7 @@ class Mutator(app_manager.RyuApp):
         self.ipTranslation.setdefault(dpid, {})
         self.ipTranslation[dpid]['10.131.1.3'] = '10.131.1.4'
         self.ipTranslation[dpid]['10.131.1.2'] = '10.131.1.5'
+        self.logger.info('hit me hit me')
 
         '''Basic Switch Functionality'''
         if eth.ethertype == ether_types.ETH_TYPE_LLDP:
