@@ -90,6 +90,7 @@ class Mutator(app_manager.RyuApp):
         datapath.send_msg(out)
 
     def arpTranslation(self, arpPkt, dpid, parser, out_port, ofproto, msg, datapath, in_port):
+        arpPkt = arpPkt[0]
         src_rip = arpPkt.src_ip
         dst_vip = arpPkt.dst_ip
         src_vip = self.RIP_VIP[dpid][src_rip]
