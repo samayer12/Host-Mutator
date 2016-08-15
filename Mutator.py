@@ -79,6 +79,7 @@ class Mutator(app_manager.RyuApp):
 
     def address_translation(self):
         self.RIP_VIP['10.131.1.2'] = '10.131.1.7'
+        self.VIP_RIP['10.131.1.5'] = ''
         self.VIP_RIP['10.131.1.7'] = '10.131.1.2'
 
         self.logger.info('changed address')
