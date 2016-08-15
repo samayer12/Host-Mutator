@@ -43,6 +43,9 @@ class Mutator(app_manager.RyuApp):
         self.RIP_VIP['10.131.1.2'] = '10.131.1.5'
         self.VIP_RIP['10.131.1.5'] = '10.131.1.2'
 
+        t = Timer(30, self.address_translation)
+        t.start()
+
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
     def switch_features_handler(self, ev):
         datapath = ev.msg.datapath
@@ -177,9 +180,6 @@ class Mutator(app_manager.RyuApp):
         icmpPkt = pkt.get_protocols(icmp.icmp)
         ipv4Pkt = pkt.get_protocols(ipv4.ipv4)
         arpPkt = pkt.get_protocols(arp.arp)
-
-        t = Timer(10, self.address_translation)
-        t.start()
 
         # TODO: Create random virtualization (to include random ttl)
         timout = 30
