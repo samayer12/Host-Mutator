@@ -89,7 +89,7 @@ class Mutator(app_manager.RyuApp):
                                   in_port=in_port, actions=actions, data=data)
         datapath.send_msg(out)
 
-    def arpTranslation(self, dpid, parser, out_port, ofproto, msg, datapath, in_port):
+    def arpTranslation(self, arpPkt, dpid, parser, out_port, ofproto, msg, datapath, in_port):
         src_rip = arpPkt.src_ip
         dst_vip = arpPkt.dst_ip
         src_vip = self.RIP_VIP[dpid][src_rip]
@@ -113,7 +113,7 @@ class Mutator(app_manager.RyuApp):
                 self.add_flow(datapath, 1, match, actions)
         self.packet_out(msg, ofproto, parser, datapath, in_port, actions)
 
-    def icmpTranslation(self, dpid, parser, out_port, ofproto, msg, datapath, in_port):
+    def icmpTranslation(self, ipv4Pkt, dpid, parser, out_port, ofproto, msg, datapath, in_port):
         ipv4Pkt = ipv4Pkt[0]
         src_rip = ipv4Pkt.src
         dst_vip = ipv4Pkt.dst
