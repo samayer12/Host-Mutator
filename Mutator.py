@@ -69,11 +69,10 @@ class Mutator(app_manager.RyuApp):
                                     match=match, instructions=inst)
         datapath.send_msg(mod)
 
-        self.address_translation()
-
-    def address_translation(self):
-        t = Timer(20 * 60, self.logger.info('timer hit'))
+        t = Timer(60, self.address_translation())
         t.start()
+    def address_translation(self):
+        self.logger.info('timer hit')
         # # Lookup virtual address
         # if rip in self.RIP_VIP[dpid]:
         #     return self.RIP_VIP[dpid][rip]
