@@ -69,8 +69,9 @@ class Mutator(app_manager.RyuApp):
                                     match=match, instructions=inst)
         datapath.send_msg(mod)
 
-        t = Timer(60, self.address_translation())
+        t = Timer(60, self.address_translation)
         t.start()
+
     def address_translation(self):
         self.logger.info('timer hit')
         # # Lookup virtual address
