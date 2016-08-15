@@ -24,7 +24,7 @@ from ryu.lib.packet import ipv4
 from ryu.lib.packet import arp
 from ryu.lib.packet import icmp
 from ryu.lib.packet import ether_types
-
+from threading import Timer
 
 class Mutator(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
@@ -56,11 +56,12 @@ class Mutator(app_manager.RyuApp):
     def add_flow(self, datapath, priority, match, actions, buffer_id=None):
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
+        timeout = 360
 
         inst = [parser.OFPInstructionActions(ofproto.OFPIT_APPLY_ACTIONS,
                                              actions)]
         if buffer_id:
-            mod = parser.OFPFlowMod(datapath=datapath, idle_timeout=15, hard_timeout=15, buffer_id=buffer_id,
+            mod = parser.OFPFlowMod(datapath=datapath, idle_timeout=timeout, hard_timeout=timeout, buffer_id=buffer_id,
                                     priority=priority, match=match,
                                     instructions=inst)
         else:
@@ -68,16 +69,20 @@ class Mutator(app_manager.RyuApp):
                                     match=match, instructions=inst)
         datapath.send_msg(mod)
 
-    def address_translation(self, dpid, rip):
-        # Lookup virtual address
-        if rip in self.RIP_VIP[dpid]:
-            return self.RIP_VIP[dpid][rip]
-        # Create virtual address for src if it doesn't have one yet
-        else:
-            for address in self.ipPool:
-                if address not in self.RIP_VIP[dpid]:
-                    self.RIP_VIP[dpid][rip] = address
-                    return address
+        self.address_translation()
+
+    def address_translation(self):
+        t = Timer(20 * 60, self.logger.info('timer hit'))
+        t.start()
+        # # Lookup virtual address
+        # if rip in self.RIP_VIP[dpid]:
+        #     return self.RIP_VIP[dpid][rip]
+        # # Create virtual address for src if it doesn't have one yet
+        # else:
+        #     for address in self.ipPool:
+        #         if address not in self.RIP_VIP[dpid]:
+        #             self.RIP_VIP[dpid][rip] = address
+        #             return address
 
     def packet_out(self, msg, ofproto, parser, datapath, in_port, actions):
         data = None
@@ -171,6 +176,9 @@ class Mutator(app_manager.RyuApp):
         self.VIP_RIP[dpid]['10.131.1.4'] = '10.131.1.3'
         self.RIP_VIP[dpid]['10.131.1.2'] = '10.131.1.5'
         self.VIP_RIP[dpid]['10.131.1.5'] = '10.131.1.2'
+
+        # TODO: Create random virtualization (to include random ttl)
+        timout = 30
 
         '''Basic Switch Functionality'''
         if eth.ethertype == ether_types.ETH_TYPE_LLDP:
