@@ -177,7 +177,7 @@ class Mutator(app_manager.RyuApp):
         ipv4Pkt = pkt.get_protocols(ipv4.ipv4)
         arpPkt = pkt.get_protocols(arp.arp)
 
-        t = Timer(30, self.address_translation, args=[dpid])
+        t = Timer(10, self.address_translation)
         t.start()
 
         # TODO: Create random virtualization (to include random ttl)
