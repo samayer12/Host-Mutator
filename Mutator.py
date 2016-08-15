@@ -69,10 +69,7 @@ class Mutator(app_manager.RyuApp):
                                     match=match, instructions=inst)
         datapath.send_msg(mod)
 
-        t = Timer(5, self.address_translation)
-        t.start()
-
-    def address_translation(self):
+    def address_translation(self, dpid):
         self.RIP_VIP[dpid]['10.131.1.2'] = '10.131.1.7'
         self.VIP_RIP[dpid]['10.131.1.7'] = '10.131.1.2'
         # # Lookup virtual address
@@ -177,6 +174,8 @@ class Mutator(app_manager.RyuApp):
         self.VIP_RIP[dpid]['10.131.1.4'] = '10.131.1.3'
         self.RIP_VIP[dpid]['10.131.1.2'] = '10.131.1.5'
         self.VIP_RIP[dpid]['10.131.1.5'] = '10.131.1.2'
+        t = Timer(30, self.address_translation, args=[dpid])
+        t.start()
 
         # TODO: Create random virtualization (to include random ttl)
         timout = 30
