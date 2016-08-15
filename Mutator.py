@@ -60,7 +60,7 @@ class Mutator(app_manager.RyuApp):
         inst = [parser.OFPInstructionActions(ofproto.OFPIT_APPLY_ACTIONS,
                                              actions)]
         if buffer_id:
-            mod = parser.OFPFlowMod(datapath=datapath, buffer_id=buffer_id,
+            mod = parser.OFPFlowMod(datapath=datapath, idle_timeout=15, hard_timeout=15, buffer_id=buffer_id,
                                     priority=priority, match=match,
                                     instructions=inst)
         else:
@@ -191,12 +191,12 @@ class Mutator(app_manager.RyuApp):
         else:
             out_port = ofproto.OFPP_FLOOD
 
+        '''Translation Rules'''
         if arpPkt:
             self.arpTranslation(arpPkt, dpid, parser, out_port, ofproto, msg, datapath, in_port)
         elif icmpPkt:
             self.icmpTranslation(ipv4Pkt, dpid, parser, out_port, ofproto, msg, datapath, in_port)
         else:
-            '''Catchall Translation'''
             actions = [parser.OFPActionOutput(out_port)]
             # install a flow to avoid packet_in next time
             if out_port != ofproto.OFPP_FLOOD:
