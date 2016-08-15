@@ -191,9 +191,9 @@ class Mutator(app_manager.RyuApp):
             out_port = ofproto.OFPP_FLOOD
 
         if arpPkt:
-            self.arpTranslation(dpid, parser, out_port, ofproto, msg, datapath, in_port)
+            self.arpTranslation(arpPkt, dpid, parser, out_port, ofproto, msg, datapath, in_port)
         elif icmpPkt:
-            self.icmpTranslation(dpid, parser, out_port, ofproto, msg, datapath, in_port)
+            self.icmpTranslation(ipv4Pkt, dpid, parser, out_port, ofproto, msg, datapath, in_port)
         else:
             '''Catchall Translation'''
             actions = [parser.OFPActionOutput(out_port)]
