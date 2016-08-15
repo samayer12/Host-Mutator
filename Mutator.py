@@ -73,7 +73,8 @@ class Mutator(app_manager.RyuApp):
         t.start()
 
     def address_translation(self):
-        self.logger.info('timer hit')
+        self.RIP_VIP[dpid]['10.131.1.2'] = '10.131.1.7'
+        self.VIP_RIP[dpid]['10.131.1.7'] = '10.131.1.2'
         # # Lookup virtual address
         # if rip in self.RIP_VIP[dpid]:
         #     return self.RIP_VIP[dpid][rip]
