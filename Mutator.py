@@ -89,15 +89,15 @@ class Mutator(app_manager.RyuApp):
             self.logger.info(VIP)
        
     def VIP_used(self, VIP):
-        if VIP in RIP_VIP:
+        if VIP in self.RIP_VIP:
             return true
         else:
             return false    
 
     def address_translation(self, RIP, VIP):
-        if RIP not in RIP_VIP:
+        if RIP not in self.RIP_VIP:
             return false
-        elif VIP not in VIP_RIP:
+        elif VIP not in self.VIP_RIP:
             return false
         else:
             return true
