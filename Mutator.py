@@ -79,7 +79,7 @@ class Mutator(app_manager.RyuApp):
         datapath.send_msg(mod)
 
     def mutate(self):
-        for address in range(1,10):
+        for address in range(1,11):
             VIP = '10.131.2.'+str(randint(11,100))
             while(self.VIP_used(VIP)):
                 VIP = '10.131.2.'+str(randint(11,100))
