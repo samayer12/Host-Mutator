@@ -90,17 +90,17 @@ class Mutator(app_manager.RyuApp):
        
     def VIP_used(self, VIP):
         if VIP in self.RIP_VIP:
-            return true
+            return TRUE
         else:
-            return false    
+            return FALSE    
 
     def address_translation(self, RIP, VIP):
         if RIP not in self.RIP_VIP:
-            return false
+            return FALSE
         elif VIP not in self.VIP_RIP:
-            return false
+            return FALSE
         else:
-            return true
+            return TRUE
         
         # self.RIP_VIP['10.131.1.2'] = '10.131.1.7'
         # del self.VIP_RIP['10.131.1.5']
