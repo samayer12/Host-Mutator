@@ -81,7 +81,7 @@ class Mutator(app_manager.RyuApp):
     def mutate(self):
         for address in range(1,10):
             VIP = '10.131.2.'+str(randint(11,100))
-            while(VIP_used(VIP)):
+            while(self.VIP_used(VIP)):
                 VIP = '10.131.2.'+str(randint(11,100))
             self.RIP_VIP['10.131.2.'+str(address)] = VIP
             self.VIP_RIP[VIP] = '10.131.2.'+str(address)
