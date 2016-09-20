@@ -91,7 +91,7 @@ class Mutator(app_manager.RyuApp):
             self.logger.info("")
        
     def VIP_used(self, VIP):
-        if VIP in self.RIP_VIP:
+        if VIP in self.RIP_VIP || VIP in self.VIP_RIP:
             return True
         else:
             return False    
