@@ -163,7 +163,7 @@ class Mutator(app_manager.RyuApp):
         dst_vip = ipv4Pkt.dst
         
         # Catch if there exists a translation
-        if !self.address_translation(src_rip, dst_vip):
+        if not self.address_translation(src_rip, dst_vip):
             return
         
         src_vip = self.RIP_VIP[src_rip]
