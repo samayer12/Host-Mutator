@@ -79,8 +79,8 @@ class Mutator(app_manager.RyuApp):
         datapath.send_msg(mod)
 
     def mutate(self):
-        for address in range(1,11):
-            VIP = '10.131.2.'+str(randint(11,100))
+        for address in range(1,12):
+            VIP = '10.131.2.'+str(randint(12,100))
             while(self.VIP_used(VIP)):
                 VIP = '10.131.2.'+str(randint(11,100))
             self.RIP_VIP['10.131.2.'+str(address)] = VIP
@@ -100,7 +100,7 @@ class Mutator(app_manager.RyuApp):
         if RIP not in self.RIP_VIP:
             return False
         elif VIP not in self.VIP_RIP:
-            return FALSE
+            return False
         else:
             return True
         
@@ -141,6 +141,7 @@ class Mutator(app_manager.RyuApp):
         src_vip = self.RIP_VIP[src_rip]
         dst_rip = self.VIP_RIP[dst_vip]
 
+        self.logger.info('arp: ')
         self.logger.info('src_RIP: %s, src_VIP: %s', src_rip, src_vip)
         self.logger.info('dst_RIP: %s, dst_VIP: %s', dst_rip, dst_vip)
 
@@ -170,7 +171,8 @@ class Mutator(app_manager.RyuApp):
         
         src_vip = self.RIP_VIP[src_rip]
         dst_rip = self.VIP_RIP[dst_vip]
-
+        
+        self.logger.info('ICMP: ')
         self.logger.info('src_RIP: %s, src_VIP: %s', src_rip, src_vip)
         self.logger.info('dst_RIP: %s, dst_VIP: %s', dst_rip, dst_vip)
 
