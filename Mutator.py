@@ -25,6 +25,7 @@ from ryu.lib.packet import arp
 from ryu.lib.packet import icmp
 from ryu.lib.packet import ether_types
 from threading import Timer
+from random import randint
 
 class Mutator(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
@@ -34,16 +35,13 @@ class Mutator(app_manager.RyuApp):
         self.mac_to_port = {}
         self.RIP_VIP = {}
         self.VIP_RIP = {}
-
+        
         # Setup default for IP translation
         # self.RIP_VIP.setdefault(dpid, {})
         # self.VIP_RIP.setdefault(dpid, {})
-        self.RIP_VIP['10.131.1.3'] = '10.131.1.4'
-        self.VIP_RIP['10.131.1.4'] = '10.131.1.3'
-        self.RIP_VIP['10.131.1.2'] = '10.131.1.5'
-        self.VIP_RIP['10.131.1.5'] = '10.131.1.2'
+        self.mutate()
 
-        t = Timer(30, self.address_translation)
+        t = Timer(300, self.mutate)
         t.start()
 
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
@@ -80,12 +78,35 @@ class Mutator(app_manager.RyuApp):
                                     match=match, instructions=inst)
         datapath.send_msg(mod)
 
-    def address_translation(self):
-        self.RIP_VIP['10.131.1.2'] = '10.131.1.7'
-        del self.VIP_RIP['10.131.1.5']
-        self.VIP_RIP['10.131.1.7'] = '10.131.1.2'
+    def mutate(self):
+        for address in range(1,10):
+            VIP = '10.131.2.'+str(randint(11,100))
+            while(VIP_used(VIP)):
+                VIP = '10.131.2.'+str(randint(11,100))
+            self.RIP_VIP['10.131.2.'+str(address)] = VIP
+            self.VIP_RIP[VIP] = '10.131.2.'+str(address)
+            
+            self.logger.info(VIP)
+       
+    def VIP_used(self, VIP):
+        if VIP in RIP_VIP:
+            return true
+        else:
+            return false    
 
-        self.logger.info('changed address')
+    def address_translation(self, RIP, VIP):
+        if RIP not in RIP_VIP:
+            return false
+        elif VIP not in VIP_RIP:
+            return false
+        else:
+            return true
+        
+        # self.RIP_VIP['10.131.1.2'] = '10.131.1.7'
+        # del self.VIP_RIP['10.131.1.5']
+        # self.VIP_RIP['10.131.1.7'] = '10.131.1.2'
+        #
+        # self.logger.info('changed address')
         # # Lookup virtual address
         # if rip in self.RIP_VIP[dpid]:
         #     return self.RIP_VIP[dpid][rip]
@@ -110,6 +131,11 @@ class Mutator(app_manager.RyuApp):
         arpPkt = arpPkt[0]
         src_rip = arpPkt.src_ip
         dst_vip = arpPkt.dst_ip
+        
+        # Catch if there exists a translation
+        if !self.address_translation(src_rip, dst_vip):
+            return
+            
         src_vip = self.RIP_VIP[src_rip]
         dst_rip = self.VIP_RIP[dst_vip]
 
@@ -135,6 +161,11 @@ class Mutator(app_manager.RyuApp):
         ipv4Pkt = ipv4Pkt[0]
         src_rip = ipv4Pkt.src
         dst_vip = ipv4Pkt.dst
+        
+        # Catch if there exists a translation
+        if !self.address_translation(src_rip, dst_vip):
+            return
+        
         src_vip = self.RIP_VIP[src_rip]
         dst_rip = self.VIP_RIP[dst_vip]
 
