@@ -25,6 +25,7 @@ from ryu.lib.packet import arp
 from ryu.lib.packet import icmp
 from ryu.lib.packet import ether_types
 from threading import Timer
+from random import randint
 
 class Mutator(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
@@ -36,12 +37,9 @@ class Mutator(app_manager.RyuApp):
         self.VIP_RIP = {}
         
         # Setup default for IP translation
-        self.RIP_VIP.setdefault(dpid, {})
-        self.VIP_RIP.setdefault(dpid, {})
-        # self.RIP_VIP['10.131.1.3'] = '10.131.1.4'
-        # self.VIP_RIP['10.131.1.4'] = '10.131.1.3'
-        # self.RIP_VIP['10.131.1.2'] = '10.131.1.5'
-        # self.VIP_RIP['10.131.1.5'] = '10.131.1.2'
+        # self.RIP_VIP.setdefault(dpid, {})
+        # self.VIP_RIP.setdefault(dpid, {})
+        self.mutate()
 
         t = Timer(300, self.mutate)
         t.start()
@@ -81,7 +79,20 @@ class Mutator(app_manager.RyuApp):
         datapath.send_msg(mod)
 
     def mutate(self):
-        
+        for address in range(1,10):
+            VIP = '10.131.2.'+str(randint(11,100))
+            while(VIP_used(VIP)):
+                VIP = '10.131.2.'+str(randint(11,100))
+            self.RIP_VIP['10.131.2.'+str(address)] = VIP
+            self.VIP_RIP[VIP] = '10.131.2.'+str(address)
+            
+            self.logger.info(VIP)
+       
+    def VIP_used(self, VIP):
+        if VIP in RIP_VIP:
+            return true
+        else:
+            return false    
 
     def address_translation(self, RIP, VIP):
         if RIP not in RIP_VIP:
@@ -150,6 +161,11 @@ class Mutator(app_manager.RyuApp):
         ipv4Pkt = ipv4Pkt[0]
         src_rip = ipv4Pkt.src
         dst_vip = ipv4Pkt.dst
+        
+        # Catch if there exists a translation
+        if !self.address_translation(src_rip, dst_vip):
+            return
+        
         src_vip = self.RIP_VIP[src_rip]
         dst_rip = self.VIP_RIP[dst_vip]
 
