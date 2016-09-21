@@ -25,6 +25,7 @@ from ryu.lib.packet import arp
 from ryu.lib.packet import icmp
 from ryu.lib.packet import ether_types
 from threading import Timer
+from random import randint
 
 class Mutator(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
@@ -34,16 +35,13 @@ class Mutator(app_manager.RyuApp):
         self.mac_to_port = {}
         self.RIP_VIP = {}
         self.VIP_RIP = {}
-
+        
         # Setup default for IP translation
         # self.RIP_VIP.setdefault(dpid, {})
         # self.VIP_RIP.setdefault(dpid, {})
-        self.RIP_VIP['10.131.1.3'] = '10.131.1.4'
-        self.VIP_RIP['10.131.1.4'] = '10.131.1.3'
-        self.RIP_VIP['10.131.1.2'] = '10.131.1.5'
-        self.VIP_RIP['10.131.1.5'] = '10.131.1.2'
+        self.mutate()
 
-        t = Timer(30, self.address_translation)
+        t = Timer(300, self.mutate)
         t.start()
 
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
@@ -80,12 +78,35 @@ class Mutator(app_manager.RyuApp):
                                     match=match, instructions=inst)
         datapath.send_msg(mod)
 
-    def address_translation(self):
-        self.RIP_VIP['10.131.1.2'] = '10.131.1.7'
-        del self.VIP_RIP['10.131.1.5']
-        self.VIP_RIP['10.131.1.7'] = '10.131.1.2'
+    def mutate(self):
+        for address in range(1,12):
+            VIP = '10.131.2.'+str(randint(12,100))
+            while(self.VIP_used(VIP)):
+                VIP = '10.131.2.'+str(randint(11,100))
+            self.RIP_VIP['10.131.2.'+str(address)] = VIP
+            self.VIP_RIP[VIP] = '10.131.2.'+str(address)
+            
+        self.logger.info(self.RIP_VIP)
+        self.logger.info(self.VIP_RIP)
+    def VIP_used(self, VIP):
+        if VIP in self.RIP_VIP or VIP in self.VIP_RIP:
+            return True
+        else:
+            return False    
 
-        self.logger.info('changed address')
+    def address_translation(self, RIP, VIP):
+        if RIP not in self.RIP_VIP:
+            return False
+        elif VIP not in self.VIP_RIP:
+            return False
+        else:
+            return True
+        
+        # self.RIP_VIP['10.131.1.2'] = '10.131.1.7'
+        # del self.VIP_RIP['10.131.1.5']
+        # self.VIP_RIP['10.131.1.7'] = '10.131.1.2'
+        #
+        # self.logger.info('changed address')
         # # Lookup virtual address
         # if rip in self.RIP_VIP[dpid]:
         #     return self.RIP_VIP[dpid][rip]
@@ -110,50 +131,64 @@ class Mutator(app_manager.RyuApp):
         arpPkt = arpPkt[0]
         src_rip = arpPkt.src_ip
         dst_vip = arpPkt.dst_ip
+        
+        # Catch if there doesn't exist a translation
+        if not self.address_translation(src_rip, dst_vip):
+            self.logger.info("fuck thisss")
+            # return
+            
         src_vip = self.RIP_VIP[src_rip]
         dst_rip = self.VIP_RIP[dst_vip]
 
+        self.logger.info('arp: ')
         self.logger.info('src_RIP: %s, src_VIP: %s', src_rip, src_vip)
         self.logger.info('dst_RIP: %s, dst_VIP: %s', dst_rip, dst_vip)
 
-        actions = [parser.OFPActionSetField(arp_tpa=dst_rip), parser.OFPActionSetField(arp_spa=src_vip),
+        actions = [parser.OFPActionSetField(arp_spa=src_vip), parser.OFPActionSetField(arp_tpa=dst_rip),
                    parser.OFPActionOutput(out_port)]
-
-        # install a flow to avoid the controller having to decide
-        if out_port != ofproto.OFPP_FLOOD:
-            match = parser.OFPMatch(in_port=in_port, eth_type=0x806, arp_tpa=dst_vip)
-            # verify if we have a valid buffer_id, if yes avoid to send both
-            # flow_mod & packet_out
-            if msg.buffer_id != ofproto.OFP_NO_BUFFER:
-                self.add_flow(datapath, 1, match, actions, msg.buffer_id)
-                return
-            else:
-                self.add_flow(datapath, 1, match, actions)
+        #
+        # # install a flow to avoid the controller having to decide
+        # if out_port != ofproto.OFPP_FLOOD:
+        #     match = parser.OFPMatch(in_port=in_port, eth_type=0x806, arp_tpa=dst_vip)
+        #     # verify if we have a valid buffer_id, if yes avoid to send both
+        #     # flow_mod & packet_out
+        #     if msg.buffer_id != ofproto.OFP_NO_BUFFER:
+        #         self.add_flow(datapath, 1, match, actions, msg.buffer_id)
+        #         return
+        #     else:
+        #         self.add_flow(datapath, 1, match, actions)
         self.packet_out(msg, ofproto, parser, datapath, in_port, actions)
 
     def icmpTranslation(self, ipv4Pkt, dpid, parser, out_port, ofproto, msg, datapath, in_port):
         ipv4Pkt = ipv4Pkt[0]
         src_rip = ipv4Pkt.src
         dst_vip = ipv4Pkt.dst
+        
+        # Catch if there exists a translation
+        if not self.address_translation(src_rip, dst_vip):
+            self.logger.info('hti ;oqiwajndfs')
+            # return
+        
         src_vip = self.RIP_VIP[src_rip]
         dst_rip = self.VIP_RIP[dst_vip]
-
+        
+        self.logger.info('ICMP: ')
         self.logger.info('src_RIP: %s, src_VIP: %s', src_rip, src_vip)
         self.logger.info('dst_RIP: %s, dst_VIP: %s', dst_rip, dst_vip)
 
         actions = [parser.OFPActionSetField(ipv4_dst=dst_rip), parser.OFPActionSetField(ipv4_src=src_vip),
                    parser.OFPActionOutput(out_port)]
 
-        # install a flow to avoid the controller having to decide
-        if out_port != ofproto.OFPP_FLOOD:
-            match = parser.OFPMatch(in_port=in_port, eth_type=0x800, ipv4_dst=dst_vip)
-            # verify if we have a valid buffer_id, if yes avoid to send both
-            # flow_mod & packet_out
-            if msg.buffer_id != ofproto.OFP_NO_BUFFER:
-                self.add_flow(datapath, 1, match, actions, msg.buffer_id)
-                return
-            else:
-                self.add_flow(datapath, 1, match, actions)
+        # # install a flow to avoid the controller having to decide
+        # if out_port != ofproto.OFPP_FLOOD:
+        #     match = parser.OFPMatch(in_port=in_port, eth_type=0x800, ipv4_dst=dst_vip)
+        #     # verify if we have a valid buffer_id, if yes avoid to send both
+        #     # flow_mod & packet_out
+        #     if msg.buffer_id != ofproto.OFP_NO_BUFFER:
+        #         self.add_flow(datapath, 1, match, actions, msg.buffer_id)
+        #         return
+        #     else:
+        #         self.add_flow(datapath, 1, match, actions)
         self.packet_out(msg, ofproto, parser, datapath, in_port, actions)
 
     @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
