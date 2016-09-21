@@ -144,8 +144,7 @@ class Mutator(app_manager.RyuApp):
         self.logger.info('src_RIP: %s, src_VIP: %s', src_rip, src_vip)
         self.logger.info('dst_RIP: %s, dst_VIP: %s', dst_rip, dst_vip)
 
-        actions = [parser.OFPActionSetField(arp_tpa=dst_rip), parser.OFPActionSetField(arp_spa=src_vip),
-                   parser.OFPActionOutput(out_port)]
+        actions = [parser.OFPActionSetField(arp_tpa=dst_rip), parser.OFPActionSetField(arp_spa=src_vip)]
         #
         # # install a flow to avoid the controller having to decide
         # if out_port != ofproto.OFPP_FLOOD:
