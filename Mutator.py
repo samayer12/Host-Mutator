@@ -41,7 +41,7 @@ class Mutator(app_manager.RyuApp):
         # self.VIP_RIP.setdefault(dpid, {})
         self.mutate()
 
-        t = Timer(600, self.mutate)
+        t = Timer(300, self.mutate)
         t.start()
 
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
@@ -65,7 +65,7 @@ class Mutator(app_manager.RyuApp):
     def add_flow(self, datapath, priority, match, actions, buffer_id=None):
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
-        timeout = 600
+        timeout = 300
 
         inst = [parser.OFPInstructionActions(ofproto.OFPIT_APPLY_ACTIONS,
                                              actions)]
@@ -79,6 +79,8 @@ class Mutator(app_manager.RyuApp):
         datapath.send_msg(mod)
 
     def mutate(self):
+        self.VIP_RIP = {}
+        self.RIP_VIP = {}
         for address in range(1,12):
             VIP = '10.131.2.'+str(randint(12,100))
             while(self.VIP_used(VIP)):
