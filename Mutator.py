@@ -87,7 +87,7 @@ class Mutator(app_manager.RyuApp):
             self.VIP_RIP[VIP] = '10.131.2.'+str(address)
             
             self.logger.info(address)
-            self.logger.info(VIP)
+            self.logger.info(self.RIP_VIP)
             self.logger.info("")
        
     def VIP_used(self, VIP):
@@ -134,7 +134,7 @@ class Mutator(app_manager.RyuApp):
         src_rip = arpPkt.src_ip
         dst_vip = arpPkt.dst_ip
         
-        # Catch if there exists a translation
+        # Catch if there doesn't exist a translation
         if not self.address_translation(src_rip, dst_vip):
             return
             
