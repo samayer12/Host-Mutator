@@ -135,7 +135,7 @@ class Mutator(app_manager.RyuApp):
         # Catch if there doesn't exist a translation
         if not self.address_translation(src_rip, dst_vip):
             self.logger.info("fuck thisss")
-            return
+            # return
             
         src_vip = self.RIP_VIP[src_rip]
         dst_rip = self.VIP_RIP[dst_vip]
@@ -167,7 +167,7 @@ class Mutator(app_manager.RyuApp):
         # Catch if there exists a translation
         if not self.address_translation(src_rip, dst_vip):
             self.logger.info('hti ;oqiwajndfs')
-            return
+            # return
         
         src_vip = self.RIP_VIP[src_rip]
         dst_rip = self.VIP_RIP[dst_vip]
