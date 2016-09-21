@@ -134,6 +134,7 @@ class Mutator(app_manager.RyuApp):
         
         # Catch if there doesn't exist a translation
         if not self.address_translation(src_rip, dst_vip):
+            self.logger.info("fuck thisss")
             return
             
         src_vip = self.RIP_VIP[src_rip]
