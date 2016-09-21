@@ -138,12 +138,12 @@ class Mutator(app_manager.RyuApp):
             # flow_mod & packet_out
             if msg.buffer_id != ofproto.OFP_NO_BUFFER:
                 self.add_flow(datapath, 1, match, actions, msg.buffer_id)
-                self.logger.info("hit 1")
+                self.logger.info("HIT1")
 
                 return
             else:
                 self.add_flow(datapath, 1, match, actions)
-                self.logger.info("hit 1")
+                self.logger.info("HIT2")
 
         self.packet_out(msg, ofproto, parser, datapath, in_port, actions)
 
@@ -158,10 +158,10 @@ class Mutator(app_manager.RyuApp):
         
         src_vip = self.RIP_VIP[src_rip]
         dst_rip = self.VIP_RIP[dst_vip]
-        
-        self.logger.info('ICMP: ')
-        self.logger.info('src_RIP: %s, src_VIP: %s', src_rip, src_vip)
-        self.logger.info('dst_RIP: %s, dst_VIP: %s', dst_rip, dst_vip)
+        #
+        # self.logger.info('ICMP: ')
+        # self.logger.info('src_RIP: %s, src_VIP: %s', src_rip, src_vip)
+        # self.logger.info('dst_RIP: %s, dst_VIP: %s', dst_rip, dst_vip)
 
         actions = [parser.OFPActionSetField(ipv4_dst=dst_rip), parser.OFPActionSetField(ipv4_src=src_vip),
                    parser.OFPActionOutput(out_port)]
