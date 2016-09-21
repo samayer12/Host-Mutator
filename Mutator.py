@@ -144,7 +144,7 @@ class Mutator(app_manager.RyuApp):
         self.logger.info('src_RIP: %s, src_VIP: %s', src_rip, src_vip)
         self.logger.info('dst_RIP: %s, dst_VIP: %s', dst_rip, dst_vip)
 
-        actions = [parser.OFPActionSetField(arp_spa=src_vip), parser.OFPActionSetField(arp_tpa=dst_rip),
+        actions = [parser.OFPActionSetField(arp_tpa=dst_rip), parser.OFPActionSetField(arp_spa=src_vip),
                    parser.OFPActionOutput(out_port)]
         #
         # # install a flow to avoid the controller having to decide
@@ -158,7 +158,6 @@ class Mutator(app_manager.RyuApp):
         #     else:
         #         self.add_flow(datapath, 1, match, actions)
         self.packet_out(msg, ofproto, parser, datapath, in_port, actions)
-        self.logger.info("Finished the method")
 
     def icmpTranslation(self, ipv4Pkt, dpid, parser, out_port, ofproto, msg, datapath, in_port):
         ipv4Pkt = ipv4Pkt[0]
