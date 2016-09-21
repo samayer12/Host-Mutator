@@ -138,12 +138,9 @@ class Mutator(app_manager.RyuApp):
             # flow_mod & packet_out
             if msg.buffer_id != ofproto.OFP_NO_BUFFER:
                 self.add_flow(datapath, 1, match, actions, msg.buffer_id)
-                self.logger.info("HIT1")
-
                 return
             else:
                 self.add_flow(datapath, 1, match, actions)
-                self.logger.info("HIT2")
 
         self.packet_out(msg, ofproto, parser, datapath, in_port, actions)
 
@@ -166,16 +163,16 @@ class Mutator(app_manager.RyuApp):
         actions = [parser.OFPActionSetField(ipv4_dst=dst_rip), parser.OFPActionSetField(ipv4_src=src_vip),
                    parser.OFPActionOutput(out_port)]
 
-        # # install a flow to avoid the controller having to decide
-        # if out_port != ofproto.OFPP_FLOOD:
-        #     match = parser.OFPMatch(in_port=in_port, eth_type=0x800, ipv4_dst=dst_vip)
-        #     # verify if we have a valid buffer_id, if yes avoid to send both
-        #     # flow_mod & packet_out
-        #     if msg.buffer_id != ofproto.OFP_NO_BUFFER:
-        #         self.add_flow(datapath, 1, match, actions, msg.buffer_id)
-        #         return
-        #     else:
-        #         self.add_flow(datapath, 1, match, actions)
+        # install a flow to avoid the controller having to decide
+        if out_port != ofproto.OFPP_FLOOD:
+            match = parser.OFPMatch(in_port=in_port, eth_type=0x800, ipv4_dst=dst_vip, ipv4_src=src_rip)
+            # verify if we have a valid buffer_id, if yes avoid to send both
+            # flow_mod & packet_out
+            if msg.buffer_id != ofproto.OFP_NO_BUFFER:
+                self.add_flow(datapath, 1, match, actions, msg.buffer_id)
+                return
+            else:
+                self.add_flow(datapath, 1, match, actions)
         self.packet_out(msg, ofproto, parser, datapath, in_port, actions)
 
     @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
