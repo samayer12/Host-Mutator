@@ -86,9 +86,7 @@ class Mutator(app_manager.RyuApp):
             self.RIP_VIP['10.131.2.'+str(address)] = VIP
             self.VIP_RIP[VIP] = '10.131.2.'+str(address)
             
-            self.logger.info(address)
             self.logger.info(self.RIP_VIP)
-            self.logger.info("")
        
     def VIP_used(self, VIP):
         if VIP in self.RIP_VIP or VIP in self.VIP_RIP:
@@ -136,6 +134,7 @@ class Mutator(app_manager.RyuApp):
         
         # Catch if there doesn't exist a translation
         if not self.address_translation(src_rip, dst_vip):
+            self.logger.info("fuck this")
             return
             
         src_vip = self.RIP_VIP[src_rip]
