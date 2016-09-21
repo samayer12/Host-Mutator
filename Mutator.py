@@ -133,7 +133,7 @@ class Mutator(app_manager.RyuApp):
 
         # install a flow to avoid the controller having to decide
         if out_port != ofproto.OFPP_FLOOD:
-            match = parser.OFPMatch(in_port=in_port, eth_type=0x806, arp_tpa=dst_vip)
+            match = parser.OFPMatch(in_port=in_port, eth_type=0x806, arp_tpa=dst_vip, arp_spa=src_rip)
             # verify if we have a valid buffer_id, if yes avoid to send both
             # flow_mod & packet_out
             if msg.buffer_id != ofproto.OFP_NO_BUFFER:
