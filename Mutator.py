@@ -158,6 +158,7 @@ class Mutator(app_manager.RyuApp):
         #     else:
         #         self.add_flow(datapath, 1, match, actions)
         self.packet_out(msg, ofproto, parser, datapath, in_port, actions)
+        self.logger.info("Finished the method")
 
     def icmpTranslation(self, ipv4Pkt, dpid, parser, out_port, ofproto, msg, datapath, in_port):
         ipv4Pkt = ipv4Pkt[0]
