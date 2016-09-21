@@ -95,8 +95,8 @@ class Mutator(app_manager.RyuApp):
             return False    
 
     def address_translation(self, RIP, VIP):
-        self.logger.info(RIP in self.RIP_VIP)
-        self.logger.info(RIP in self.VIP_RIP)
+        self.logger.info(RIP not in self.RIP_VIP)
+        self.logger.info(VIP not in self.VIP_RIP)
 
         # if RIP not in self.RIP_VIP:
 #             return False
