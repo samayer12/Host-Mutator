@@ -86,8 +86,8 @@ class Mutator(app_manager.RyuApp):
             self.RIP_VIP['10.131.2.'+str(address)] = VIP
             self.VIP_RIP[VIP] = '10.131.2.'+str(address)
             
-            self.logger.info(self.RIP_VIP)
-       
+        self.logger.info(self.RIP_VIP)
+        self.logger.info(self.VIP_RIP)
     def VIP_used(self, VIP):
         if VIP in self.RIP_VIP or VIP in self.VIP_RIP:
             return True
