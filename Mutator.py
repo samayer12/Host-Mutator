@@ -41,8 +41,8 @@ class Mutator(app_manager.RyuApp):
         # self.VIP_RIP.setdefault(dpid, {})
         self.mutate()
 
-        t = Timer(600, self.mutate)
-        t.start()
+        # t = Timer(600, self.mutate)
+        # t.start()
 
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
     def switch_features_handler(self, ev):
@@ -65,12 +65,12 @@ class Mutator(app_manager.RyuApp):
     def add_flow(self, datapath, priority, match, actions, buffer_id=None):
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
-        timeout = 600
+        # timeout = 600 idle_timeout=timeout, hard_timeout=timeout,
 
         inst = [parser.OFPInstructionActions(ofproto.OFPIT_APPLY_ACTIONS,
                                              actions)]
         if buffer_id:
-            mod = parser.OFPFlowMod(datapath=datapath, idle_timeout=timeout, hard_timeout=timeout, buffer_id=buffer_id,
+            mod = parser.OFPFlowMod(datapath=datapath, buffer_id=buffer_id,
                                     priority=priority, match=match,
                                     instructions=inst)
         else:
@@ -119,6 +119,7 @@ class Mutator(app_manager.RyuApp):
         
         # Catch if there doesn't exist a translation
         if not self.address_translation(src_rip, dst_vip):
+            self.logger.info("hit 1")
             return
             
         src_vip = self.RIP_VIP[src_rip]
@@ -150,6 +151,7 @@ class Mutator(app_manager.RyuApp):
         
         # Catch if there exists a translation
         if not self.address_translation(src_rip, dst_vip):
+            self.logger.info("hit 2")
             return
         
         src_vip = self.RIP_VIP[src_rip]
